@@ -10,6 +10,7 @@ public class PlayerLevel : MonoBehaviour
 
     public int maxLevel = 3;
 
+
     // EXP yang dibutuhkan per level
     public int[] expNeeded = { 0, 100, 200 };
 
@@ -60,6 +61,7 @@ public class PlayerLevel : MonoBehaviour
 
             TriggerLevelUpAnimation();
         }
+
     }
 
     void TriggerLevelUpAnimation()
@@ -99,4 +101,10 @@ public class PlayerLevel : MonoBehaviour
         }
 
     }
+
+    void Update()
+    {
+        Debug.Log("LVL: " + level);
+    }
+
 }

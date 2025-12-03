@@ -11,6 +11,8 @@ public class PlayerStats : MonoBehaviour
     public TMP_Text moneyText;
     public TMP_Text expText;
 
+    
+
     void Start()
     {
         UpdateUI();
@@ -42,4 +44,7 @@ public class PlayerStats : MonoBehaviour
         if (expText != null)
             expText.text = $"EXP: {playerEXP}";
     }
+
+    
+
 }
