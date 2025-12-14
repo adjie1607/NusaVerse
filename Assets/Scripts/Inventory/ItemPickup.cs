@@ -39,14 +39,13 @@ public class ItemPickup : MonoBehaviour
 
     void PickUp()
     {
-        // 1. Masukkan ke Database Inventory
+        
         InventorySystem.Instance.AddItem(itemData);
 
-        // 2. Langsung Munculkan Popup Penjelasan (Pakai script yang sudah kita buat sebelumnya)
-        // Ini menjawab keinginanmu: "popup item yg diambil bakal muncul panel penjelasan detail"
+      
         ItemDetailUI.Instance.OpenDetail(itemData);
 
-        // 3. Hancurkan benda 3D dari dunia (karena sudah diambil)
+       
         Destroy(gameObject);
     }
 }
