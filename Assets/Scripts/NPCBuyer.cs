@@ -1,163 +1,96 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
+[RequireComponent(typeof(NavMeshAgent))]
 public class NPCBuyer : MonoBehaviour
 {
-    [Header("Movement")]
-    public float moveSpeed = 2f;
-    public Transform targetPosition; // posisi antrian
-    public Transform player;
+    private NavMeshAgent agent;
+    private QueueManager myManager;
+    private PlayerShop myShop; // <-- Tambahan referensi ke Shop
 
-    [Header("Exit")]
-    public Transform exitPoint; // <-- assign dari QueueManager
-    public float leaveThreshold = 0.1f;
-
-    // states
-    private bool waitingToBuy = false;
+    private bool canBuy = false;
     private bool hasBought = false;
-    private bool isLeaving = false;
 
-    // safety
-    public float waitTimeout = 12f; // timeout nunggu interaction
+    void Awake()
+    {
+        agent = GetComponent<NavMeshAgent>();
+        agent.speed = 3.5f;
+        agent.stoppingDistance = 0f;
+    }
+
+    // Initialize sekarang menerima Shop juga
+    public void Initialize(QueueManager manager, PlayerShop shop)
+    {
+        myManager = manager;
+        myShop = shop; // <-- Simpan info shop
+        myManager.AddToQueue(this);
+    }
+
+    public void GoToQueuePosition(Vector3 pos)
+    {
+        if (!hasBought)
+        {
+            agent.isStopped = false;
+            agent.SetDestination(pos);
+        }
+    }
+
+    public void EnableBuyingInteraction(bool status)
+    {
+        canBuy = status;
+    }
 
     void Update()
     {
-        // kalau lagi leaving, gerak ke exitPoint
-        if (isLeaving && exitPoint != null)
+        if (canBuy && !hasBought)
         {
-            MoveTo(exitPoint.position);
-            return;
-        }
-
-        // normal: gerak ke posisi antrian
-        if (!waitingToBuy && targetPosition != null && !isLeaving)
-        {
-            MoveTo(targetPosition.position);
-
-            if (Vector3.Distance(transform.position, targetPosition.position) < 0.05f)
+            if (!agent.pathPending && agent.remainingDistance <= 2.0f)
             {
-                transform.position = targetPosition.position;
+                agent.isStopped = true;
+                transform.LookAt(transform.position + Vector3.back);
+
+                if (Input.GetKeyDown(KeyCode.Space))
+                {
+                    TryToBuy(); // <-- Ganti jadi fungsi TryToBuy
+                }
             }
         }
     }
 
-    void MoveTo(Vector3 pos)
+    void TryToBuy()
     {
-        transform.position = Vector3.MoveTowards(transform.position, pos, moveSpeed * Time.deltaTime);
-
-        // optional: rotate smoothly toward movement direction
-        Vector3 dir = pos - transform.position;
-        dir.y = 0;
-        if (dir.sqrMagnitude > 0.001f)
+        // Panggil fungsi JualBarang di PlayerShop
+        if (myShop != null)
         {
-            Quaternion rot = Quaternion.LookRotation(dir.normalized);
-            transform.rotation = Quaternion.Slerp(transform.rotation, rot, 10f * Time.deltaTime);
-        }
-    }
+            bool sukses = myShop.JualBarang(); // <-- INI KUNCINYA
 
-    // dipanggil QueueManager ketika posisi sudah di-set
-    public IEnumerator WaitToBuy(PlayerShop shop)
-    {
-        if (hasBought || isLeaving) yield break;
-
-        // tunggu sampai di posisi antrian
-        yield return new WaitUntil(() => Vector3.Distance(transform.position, targetPosition.position) < 0.12f);
-
-        float timer = 0f;
-        bool becameCurrent = false;
-
-        while (timer < waitTimeout && !becameCurrent && !hasBought && !isLeaving)
-        {
-            if (shop != null && shop.TrySetCurrentBuyer(this))
+            if (sukses)
             {
-                waitingToBuy = true;
-                becameCurrent = true;
-                Debug.Log($"{name} siap beli! Tekan [SPACE] buat jual balon.");
+                // Kalau sukses, NPC senang dan pergi
+                hasBought = true;
+                canBuy = false;
+                myManager.RemoveFromQueue(this);
 
-                float localTimer = 0f;
-                while (waitingToBuy && localTimer < waitTimeout && !isLeaving)
-                {
-                    localTimer += Time.deltaTime;
-                    yield return null;
-                }
-
-                // kalau masih waiting (timeout), clear di shop
-                if (waitingToBuy)
-                {
-                    waitingToBuy = false;
-                    shop.ClearCurrentBuyer(this);
-                }
-
-                break;
+                if (myManager.exitPoint != null) LeaveShop(myManager.exitPoint.position);
             }
             else
             {
-                yield return new WaitForSeconds(0.15f);
-                timer += 0.15f;
+                // Kalau stok habis (return false)
+                Debug.Log("Yah stok habis, NPC kecewa.");
+                // Opsional: NPC pergi tanpa beli atau nunggu restock
+                // Untuk sekarang kita buat dia pergi aja
+                hasBought = true;
+                canBuy = false;
+                myManager.RemoveFromQueue(this);
+                if (myManager.exitPoint != null) LeaveShop(myManager.exitPoint.position);
             }
         }
-
-        // kalau gagal jadi current buyer (timeout atau ditolak), langsung leave pelan
-        if (!becameCurrent && !hasBought && !isLeaving)
-        {
-            Debug.Log($"{name} skip/timeout, pergi.");
-            StartLeaving();
-        }
     }
 
-    // dipanggil ketika transaksi berhasil
-    public void OnBoughtBalloon()
+    public void LeaveShop(Vector3 exitPos)
     {
-        if (hasBought || isLeaving) return;
-
-        waitingToBuy = false;
-        hasBought = true;
-
-        // pastiin dia clear di player shop if needed (player akan clear currentBuyer)
-        StartLeaving();
-    }
-
-    // dipanggil kalau stok habis
-    public void OnBuyFailed_NoStock()
-    {
-        if (isLeaving) return;
-
-        waitingToBuy = false;
-        StartLeaving();
-    }
-
-    void StartLeaving()
-    {
-        // nonaktifkan ability buat jadi current buyer lagi
-        isLeaving = true;
-        waitingToBuy = false;
-
-        // optional: disable collider / interactions so other systems won't set this again
-        Collider c = GetComponent<Collider>();
-        if (c != null) c.enabled = false;
-    }
-
-    // optional public helper to check if NPC is leaving (QueueManager might want to skip)
-    public bool IsLeaving()
-    {
-        return isLeaving;
-    }
-
-    // OnDrawGizmos buat debugging visual di editor
-    void OnDrawGizmosSelected()
-    {
-        if (targetPosition != null)
-        {
-            Gizmos.color = Color.yellow;
-            Gizmos.DrawLine(transform.position, targetPosition.position);
-        }
-
-        if (exitPoint != null)
-        {
-            Gizmos.color = Color.green;
-            Gizmos.DrawLine(transform.position, exitPoint.position);
-            Gizmos.DrawSphere(exitPoint.position, 0.12f);
-        }
+        agent.isStopped = false;
+        agent.SetDestination(exitPos);
+        Destroy(gameObject, 10f);
     }
 }
