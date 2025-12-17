@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8264403522799856520}
   - component: {fileID: 1767260038241334169}
   - component: {fileID: 5705016993530207356}
-  - component: {fileID: 8976900022620286077}
+  - component: {fileID: 8153394115278132498}
   - component: {fileID: 8325996527670513513}
   m_Layer: 0
   m_Name: npcPrefab
@@ -109,7 +109,7 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &8976900022620286077
+--- !u!114 &8153394115278132498
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -121,6 +121,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe4c8bdcf20c09547a46b75a2180372a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  canBuy: 0
+  isInQueue: 0
+  hasBought: 0
+  wanderCenter: {fileID: 0}
+  wanderRadius: 5
+  waitTime: 3
 --- !u!195 &8325996527670513513
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -131,11 +137,11 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 12
+  m_Speed: 120
   m_Acceleration: 16
   avoidancePriority: 50
   m_AngularSpeed: 120
-  m_StoppingDistance: 0
+  m_StoppingDistance: 2
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1

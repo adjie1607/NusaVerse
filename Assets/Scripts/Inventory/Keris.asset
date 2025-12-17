@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 96e85e85a16fb0747a32bdca30fca221, type: 3}
-  m_Name: Balon
+  m_Name: Keris
   m_EditorClassIdentifier: 
-  itemName: Balon
-  description: balon saya nih
-  icon: {fileID: -487157266, guid: 1775bd29b88a5174096205b22a75b926, type: 3}
-  prefab: {fileID: 6839127940471408737, guid: 68245620023c2ab46a847e7b8cedb450, type: 3}
+  itemName: Keris
+  description: tirissss
+  icon: {fileID: -2039876682, guid: 1775bd29b88a5174096205b22a75b926, type: 3}
+  prefab: {fileID: 0}
