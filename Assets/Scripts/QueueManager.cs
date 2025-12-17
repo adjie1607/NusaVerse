@@ -4,57 +4,58 @@ using UnityEngine;
 
 public class QueueManager : MonoBehaviour
 {
-    [Header("Titik Antrian (Urut dari depan ke belakang)")]
+    [Header("Titik Antrian")]
     public Transform[] queuePoints;
-
-    [Header("Titik Keluar")]
     public Transform exitPoint;
 
-    // List orang yang sedang ngantri
     private List<NPCBuyer> currentQueue = new List<NPCBuyer>();
 
-    // 1. Dipanggil saat NPC baru lahir
+    // === TAMBAHAN BARU: FUNGSI CEK PENUH ===
+    public bool IsQueueFull()
+    {
+        // Kalau jumlah pengantri >= jumlah titik antrian, berarti penuh
+        return currentQueue.Count >= queuePoints.Length;
+    }
+    // ========================================
+
     public void AddToQueue(NPCBuyer npc)
     {
         if (currentQueue.Count < queuePoints.Length)
         {
             currentQueue.Add(npc);
-            UpdateAllPositions(); // Atur ulang barisan
+            UpdateAllPositions();
         }
         else
         {
-            Debug.Log("Antrian Penuh! NPC langsung pulang.");
-            npc.LeaveShop(exitPoint.position);
+            // Kalau penuh, suruh pulang
+            if (exitPoint) npc.LeaveShop(exitPoint.position);
+            else Destroy(npc.gameObject);
         }
     }
 
-    // 2. Dipanggil saat NPC selesai beli / pergi
     public void RemoveFromQueue(NPCBuyer npc)
     {
         if (currentQueue.Contains(npc))
         {
             currentQueue.Remove(npc);
-            UpdateAllPositions(); // Yang belakang maju ke depan
+            UpdateAllPositions();
         }
     }
 
-    // 3. Fungsi untuk menyuruh semua orang ke posisi masing-masing
     void UpdateAllPositions()
     {
         for (int i = 0; i < currentQueue.Count; i++)
         {
-            // Suruh NPC jalan ke titik antrian sesuai urutannya (Index 0 ke Point 0, dst)
             currentQueue[i].GoToQueuePosition(queuePoints[i].position);
 
-            // Cek status: Kalau dia urutan 0 (paling depan), dia boleh beli
-            if (i == 0)
-            {
-                currentQueue[i].EnableBuyingInteraction(true);
-            }
-            else
-            {
-                currentQueue[i].EnableBuyingInteraction(false);
-            }
+            if (i == 0) currentQueue[i].EnableBuyingInteraction(true);
+            else currentQueue[i].EnableBuyingInteraction(false);
         }
+    }
+
+    public NPCBuyer GetFirstCustomer()
+    {
+        if (currentQueue.Count > 0) return currentQueue[0];
+        return null;
     }
 }
