@@ -1,86 +1,74 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using UnityEngine;
 using TMPro;
 
 public class PlayerShop : MonoBehaviour
 {
-    [Header("Data")]
+    [Header("Data Toko")]
     public int balloonStock = 10;
     public int balloonPrice = 5;
-    public int playerMoney = 0;
+
+    // (Uang dihapus dari sini, kita pakai uang di InventoryManager)
 
     [Header("EXP System")]
-    public PlayerLevel playerLevel;   // Reference ke script PlayerLevel
-    public int expPerSale = 10;       // Exp yang didapat tiap jual balon
+    public PlayerLevel playerLevel;
+    public int expPerSale = 10;
 
-    [Header("UI - TextMeshPro")]
+    [Header("UI & FX")]
     public TMP_Text balloonText;
-    public TMP_Text moneyText;
-
-    [Header("FX & Audio")]
+    public TMP_Text moneyText; // Menampilkan uang dari InventoryManager
     public GameObject floatingExpPrefab;
     public Transform floatingSpawnPoint;
     public AudioSource sellSound;
     public AudioSource expSound;
 
-    void Start()
+    void Update()
     {
+        // Update UI terus menerus agar sinkron dengan Inventory
         UpdateUI();
     }
 
-    // Fungsi ini dipanggil oleh NPCBuyer ketika Spasi ditekan
-    // Mengembalikan TRUE jika berhasil, FALSE jika stok habis
     public bool JualBarang()
     {
         if (balloonStock > 0)
         {
-            // 1. Logika Kurangi Barang & Tambah Uang
             balloonStock--;
-            playerMoney += balloonPrice;
-            UpdateUI();
 
-            Debug.Log("Jualan berhasil! Stok sisa: " + balloonStock);
-
-            // 2. Tambah EXP (Jika script PlayerLevel terpasang)
-            if (playerLevel != null)
+            // === PERUBAHAN UTAMA DISINI ===
+            // Setor uang ke InventoryManager
+            if (InventoryManager.Instance != null)
             {
-                playerLevel.AddExp(expPerSale);
+                InventoryManager.Instance.AddMoney(balloonPrice);
             }
+            // ==============================
 
-            // 3. Efek Visual (Floating Text)
+            if (playerLevel != null) playerLevel.AddExp(expPerSale);
+
+            // FX logic
             if (floatingExpPrefab != null && floatingSpawnPoint != null)
             {
                 GameObject fx = Instantiate(floatingExpPrefab, floatingSpawnPoint.position, Quaternion.identity);
-                // Pastikan prefab kamu punya script FloatingText
-                // Kalau error disini, cek apakah script FloatingText ada
                 var floatText = fx.GetComponent<FloatingText>();
-                if (floatText != null)
-                {
-                    floatText.Setup($"+{expPerSale} EXP", Color.yellow);
-                }
+                if (floatText != null) floatText.Setup($"+{expPerSale} EXP", Color.yellow);
             }
-
-            // 4. Efek Suara
             if (expSound != null) expSound.Play();
             if (sellSound != null) sellSound.Play();
 
-            return true; // Lapor ke NPC: "Oke, transaksi sukses"
+            return true;
         }
         else
         {
-            Debug.Log("Stok balon habis! Tidak bisa jual.");
-            return false; // Lapor ke NPC: "Gagal, stok kosong"
+            return false;
         }
     }
 
-    public void UpdateUI()
+    void UpdateUI()
     {
-        if (balloonText != null)
-            balloonText.text = $"Balon: {balloonStock}";
+        if (balloonText != null) balloonText.text = $"Balon: {balloonStock}";
 
-        if (moneyText != null)
-            moneyText.text = $"Uang: {playerMoney}";
+        // Ambil info uang dari InventoryManager
+        if (InventoryManager.Instance != null && moneyText != null)
+        {
+            moneyText.text = $"Uang: {InventoryManager.Instance.totalMoney}";
+        }
     }
 }
