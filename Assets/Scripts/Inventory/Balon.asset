@@ -15,4 +15,4 @@ MonoBehaviour:
   itemName: Balon
   description: balon saya nih
   icon: {fileID: -487157266, guid: 1775bd29b88a5174096205b22a75b926, type: 3}
-  prefab: {fileID: 6839127940471408737, guid: 68245620023c2ab46a847e7b8cedb450, type: 3}
+  prefab: {fileID: 8972335539094654761, guid: ed735f776261d7447a5d274ee35194d1, type: 3}

@@ -36,8 +36,8 @@ public class InventoryManager : MonoBehaviour
         {
             collectedItems.Add(item);
             Debug.Log("Item baru masuk tas: " + item.itemName);
+
+            if (inventoryUI != null) inventoryUI.UpdateDisplay();
         }
-        if (inventoryUI != null) inventoryUI.UpdateDisplay();
-        
     }
 }
