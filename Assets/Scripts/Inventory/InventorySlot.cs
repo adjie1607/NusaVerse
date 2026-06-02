@@ -4,33 +4,20 @@ using TMPro;
 
 public class InventorySlot : MonoBehaviour
 {
-    [Header("Komponen UI di Prefab")]
     public Image iconDisplay;
     public TMP_Text nameDisplay;
     public Button slotButton;
 
-    // Fungsi ini dipanggil oleh InventoryUI untuk mengisi data
     public void SetupSlot(ItemData item, System.Action<ItemData> onClickCallback)
     {
-        // 1. Set Icon
-        if (item.icon != null)
-        {
-            iconDisplay.sprite = item.icon;
-            iconDisplay.enabled = true; // Pastikan nyala
-        }
-        else
-        {
-            iconDisplay.enabled = false; // Matikan kalau ga ada gambar
-        }
+        if (item == null) return;
+        if (iconDisplay) iconDisplay.sprite = item.icon;
+        if (nameDisplay) nameDisplay.text = item.itemName;
 
-        // 2. Set Nama
-        if (nameDisplay != null)
+        if (slotButton)
         {
-            nameDisplay.text = item.itemName;
+            slotButton.onClick.RemoveAllListeners();
+            slotButton.onClick.AddListener(() => onClickCallback(item));
         }
-
-        // 3. Set Tombol Klik
-        slotButton.onClick.RemoveAllListeners(); // Hapus event lama biar ga numpuk
-        slotButton.onClick.AddListener(() => onClickCallback(item));
     }
 }

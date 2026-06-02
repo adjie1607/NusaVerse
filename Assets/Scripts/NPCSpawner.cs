@@ -3,34 +3,17 @@ using UnityEngine;
 public class NPCSpawner : MonoBehaviour
 {
     public GameObject npcPrefab;
-    public float spawnInterval = 3f;
+    public QueueManager queueManager;
+    public PlayerShop playerShop; // <-- Drag Script PlayerShop kesini di Inspector
+    public Transform spawnLocation;
 
-    [Header("Batasan Populasi")]
-    public int maxNPC = 20; // Maksimal NPC di scene
-
-    [Header("Referensi Sistem")]
-    public QueueManager queueManager; // Drag QueueManager kesini (Wajib!)
-    public PlayerShop playerShop;     // Drag PlayerShop kesini (Wajib!)
-
-    [Header("Lokasi Jalan-Jalan (Jika Antrian Penuh)")]
-    public Transform[] wanderSpots;   // Drag titik kumpul/gerobak makanan
-
-    [Header("Titik Keluar (Tempat NPC Pulang)")]
-    public Transform exitPoint;       // Drag titik di ujung map buat mereka pulang
-
-    private float timer;
+    public float interval = 5f;
+    private float timer = 0;
 
     void Update()
     {
-        // 1. Cek Jumlah NPC saat ini
-        // (Cara ini agak berat kalau ratusan, tapi untuk 20 aman)
-        int currentCount = FindObjectsOfType<NPCBuyer>().Length;
-
-        // Kalau sudah 20 atau lebih, JANGAN SPAWN
-        if (currentCount >= maxNPC) return;
-
         timer += Time.deltaTime;
-        if (timer >= spawnInterval)
+        if (timer >= interval)
         {
             SpawnNPC();
             timer = 0;
@@ -39,35 +22,15 @@ public class NPCSpawner : MonoBehaviour
 
     void SpawnNPC()
     {
-        GameObject newNPC = Instantiate(npcPrefab, transform.position, Quaternion.identity);
-        NPCBuyer npcScript = newNPC.GetComponent<NPCBuyer>();
+        if (queueManager == null || npcPrefab == null || playerShop == null) return;
 
-        if (npcScript != null)
+        GameObject newNPC = Instantiate(npcPrefab, spawnLocation.position, Quaternion.identity);
+        NPCBuyer script = newNPC.GetComponent<NPCBuyer>();
+
+        if (script != null)
         {
-            // === LOGIKA PRIORITAS ===
-
-            // Cek 1: Apakah Antrian Balon Masih Muat?
-            if (!queueManager.IsQueueFull())
-            {
-                // Kalau muat, WAJIB MASUK ANTRIAN (Prioritas Utama)
-                npcScript.Initialize(queueManager, playerShop);
-
-                // Set exit point biar nanti pas abis beli tau jalan pulang
-                npcScript.exitPoint = exitPoint;
-            }
-            else
-            {
-                // Cek 2: Kalau Antrian Penuh, baru jadi Wanderer (Jalan-jalan)
-                if (wanderSpots.Length > 0)
-                {
-                    int randomIndex = Random.Range(0, wanderSpots.Length);
-                    npcScript.wanderCenter = wanderSpots[randomIndex];
-                    npcScript.exitPoint = exitPoint; // Kasih tau jalan pulang
-
-                    // Aktifkan mode wander manual
-                    npcScript.StartWandering();
-                }
-            }
+            // Kirim Manager DAN Shop ke NPC
+            script.Initialize(queueManager, playerShop);
         }
     }
 }
