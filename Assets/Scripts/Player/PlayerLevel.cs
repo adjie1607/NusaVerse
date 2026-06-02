@@ -29,17 +29,31 @@ public class PlayerLevel : MonoBehaviour
 
     void Start()
     {
+        // 1. Saat Player baru lahir, cek apakah ada data titipan di Manager
+        if (GameSessionManager.Instance != null)
+        {
+            level = GameSessionManager.Instance.globalLevel;
+            currentExp = GameSessionManager.Instance.globalEXP;
+            currentMoney = GameSessionManager.Instance.globalMoney;
+            balloonCount = GameSessionManager.Instance.globalBalloons;
+        }
+
         UpdateUI();
     }
 
-    // Fungsi untuk menambah Uang & Mengurangi Balon (Dipanggil Shop)
-    public void TransaksiBerhasil(int uangMasuk, int balonKeluar)
+    // 2. Fungsi baru untuk menitipkan data ke Manager
+    public void SimpanDataKeManager()
     {
-        currentMoney += uangMasuk;
-        balloonCount -= balonKeluar;
-        UpdateUI(); // Update tampilan UI
+        if (GameSessionManager.Instance != null)
+        {
+            GameSessionManager.Instance.globalLevel = level;
+            GameSessionManager.Instance.globalEXP = currentExp;
+            GameSessionManager.Instance.globalMoney = currentMoney;
+            GameSessionManager.Instance.globalBalloons = balloonCount;
+        }
     }
 
+    // Fungsi untuk menambah Uang & Mengurangi Balon (Dipanggil Shop)
     public void AddExp(int amount)
     {
         if (level >= maxLevel) return;
@@ -48,7 +62,18 @@ public class PlayerLevel : MonoBehaviour
         CheckLevelUp();
         UpdateUI();
 
+        SimpanDataKeManager(); // <--- TAMBAHKAN INI
+
         if (expGainSound != null) expGainSound.Play();
+    }
+
+    public void TransaksiBerhasil(int uangMasuk, int balonKeluar)
+    {
+        currentMoney += uangMasuk;
+        balloonCount -= balonKeluar;
+        UpdateUI();
+
+        SimpanDataKeManager(); // <--- TAMBAHKAN INI
     }
 
     void CheckLevelUp()

@@ -5,9 +5,11 @@ public class GameSessionManager : MonoBehaviour
 {
     public static GameSessionManager Instance;
 
-    [Header("Stats Player")]
-    public int playerMoney = 10000;
-    public int currentEXP = 0; // Exp Player
+    [Header("Stats Player Global")]
+    public int globalLevel = 1;
+    public int globalEXP = 0;
+    public int globalMoney = 0;
+    public int globalBalloons = 10;
 
     [Header("Navigation Data")]
     public bool isReturningFromHouse = false;
@@ -33,8 +35,8 @@ public class GameSessionManager : MonoBehaviour
     // --- FUNGSI UNTUK EXP (Ini yang tadi hilang) ---
     public void AddEXP(int amount)
     {
-        currentEXP += amount;
-        Debug.Log("EXP Bertambah! Total EXP: " + currentEXP);
+        globalEXP += amount;
+        Debug.Log("EXP Bertambah! Total EXP: " + globalEXP);
     }
     // ----------------------------------------------
 

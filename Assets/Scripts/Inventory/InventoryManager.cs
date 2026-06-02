@@ -14,8 +14,11 @@ public class InventoryManager : MonoBehaviour
 
     void Awake()
     {
-        // Setup Singleton biar bisa dipanggil dari mana aja
-        if (Instance == null) Instance = this;
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject); 
+        }
         else Destroy(gameObject);
     }
 
