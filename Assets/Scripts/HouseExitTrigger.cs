@@ -1,31 +1,47 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class HouseExitTrigger : MonoBehaviour
 {
-    public string sceneTujuan = "GameScene";
+    [Header("Identitas & Spawn")]
+    public string houseID; // Contoh: "Rumah1"
+    public Transform outsideSpawnPoint; // Seret titik objek spawn di LUAR rumah adat
 
-    [Header("Identitas Rumah")]
-    public string houseID; // DISINI KITA ISI MANUAL DI INSPECTOR (Misal: "Rumah1")
+    [Header("Referensi Kuis")]
+    public GameObject panelQuiz;
+    public QuizManager quizManager;
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
-            KeluarRumah();
+            KeluarRumah(other.gameObject);
         }
     }
 
-    public void KeluarRumah()
+    public void KeluarRumah(GameObject player)
     {
+        // 1. Teleport player kembali ke luar di map utama
+        player.transform.position = outsideSpawnPoint.position;
+        Rigidbody rb = player.GetComponent<Rigidbody>();
+        if (rb != null) rb.linearVelocity = Vector3.zero;
+
+        // 2. Set data riwayat kunjungan rumah
         if (GameSessionManager.Instance != null)
         {
             GameSessionManager.Instance.isReturningFromHouse = true;
-
-            // Kirim ID rumah ini ke Manager
             GameSessionManager.Instance.lastVisitedID = houseID;
         }
 
-        SceneManager.LoadScene(sceneTujuan);
+        // 3. Langsung munculkan kuis tanpa reload scene
+        if (quizManager != null && panelQuiz != null)
+        {
+            quizManager.SiapkanSoal(houseID);
+            panelQuiz.SetActive(true);
+
+            // Buka kursor dan pause game sementara untuk menjawab kuis
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
+            Time.timeScale = 0f;
+        }
     }
 }

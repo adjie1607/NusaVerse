@@ -86,7 +86,6 @@ public class QuizManager : MonoBehaviour
 
     public void OnAnswerSelected(int index)
     {
-        // Cek dulu biar gak error kalau list kosong
         if (currentQuestionList.Count == 0) return;
 
         if (index == currentQuestionList[currentQuestionIndex].correctAnswerIndex)
@@ -105,7 +104,21 @@ public class QuizManager : MonoBehaviour
         {
             GameSessionManager.Instance.MarkHouseAsComplete(GameSessionManager.Instance.lastVisitedID);
         }
+
         quizPanel.SetActive(false);
-        UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
+
+        // Cari MainSceneController yang aktif dan paksa buka gembok rumah berikutnya secara instan
+        MainSceneController mainScene = FindFirstObjectByType<MainSceneController>();
+        if (mainScene != null)
+        {
+            mainScene.UpdateWorldProgress();
+        }
+
+        // Kembalikan kontrol pergerakan player dan sembunyikan kursor
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+        Time.timeScale = 1f;
+
+        Debug.Log("Kuis selesai dan gembok diperbarui tanpa reload scene.");
     }
 }

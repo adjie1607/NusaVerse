@@ -32,14 +32,12 @@ public class GameSessionManager : MonoBehaviour
         }
     }
 
-    // --- FUNGSI UNTUK EXP (Ini yang tadi hilang) ---
+    // Fungsi untuk menambah EXP dari kuis
     public void AddEXP(int amount)
     {
-        globalEXP += amount;
-        Debug.Log("EXP Bertambah! Total EXP: " + globalEXP);
+        globalEXP += amount; // Menggunakan variabel globalEXP yang baru
+        Debug.Log("EXP Kuis masuk! Total EXP Global: " + globalEXP);
     }
-    // ----------------------------------------------
-
     // Fungsi untuk menandai rumah selesai
     public void MarkHouseAsComplete(string houseID)
     {

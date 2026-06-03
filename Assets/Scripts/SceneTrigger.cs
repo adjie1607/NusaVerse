@@ -1,33 +1,30 @@
-﻿using System.Collections;
-using UnityEngine;
-using UnityEngine.SceneManagement;
+﻿using UnityEngine;
 using TMPro;
 
 public class SceneTrigger : MonoBehaviour
 {
-    public string targetScene;
-
+    [Header("UI References")]
     public TextMeshProUGUI pressEText;
     public TextMeshProUGUI levelWarningText;
 
+    [Header("Single Scene Setup")]
+    public Transform interiorSpawnPoint; // Seret objek titik spawn di DALAM Rumah Adat disini
     public int requiredLevel = 2;
 
     private bool isPlayerInside = false;
     private PlayerLevel playerLevel;
+    private GameObject playerObj;
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
-            // Aman: cek di parent juga
+            playerObj = other.gameObject;
             playerLevel = other.GetComponent<PlayerLevel>();
             if (playerLevel == null)
                 playerLevel = other.GetComponentInParent<PlayerLevel>();
 
-            Debug.Log("PlayerLevel FOUND? → " + (playerLevel != null));
-
             isPlayerInside = true;
-
             pressEText.gameObject.SetActive(true);
             pressEText.text = "Tekan E untuk masuk";
         }
@@ -54,13 +51,7 @@ public class SceneTrigger : MonoBehaviour
 
     void TryEnterHouse()
     {
-        if (playerLevel == null)
-        {
-            Debug.LogError("PlayerLevel ga ditemukan di Player!");
-            return;
-        }
-
-        Debug.Log("Cek level player: " + playerLevel.level);
+        if (playerLevel == null || playerObj == null) return;
 
         if (playerLevel.level < requiredLevel)
         {
@@ -69,12 +60,17 @@ public class SceneTrigger : MonoBehaviour
 
             CancelInvoke(nameof(HideWarning));
             Invoke(nameof(HideWarning), 1.5f);
-
             return;
         }
 
-        // Kalau lolos level → masuk scene
-        SceneManager.LoadScene(targetScene);
+        pressEText.gameObject.SetActive(false);
+
+        // Jalankan Teleportasi ke interior rumah
+        playerObj.transform.position = interiorSpawnPoint.position;
+
+        // Reset kecepatan Rigidbody agar player tidak meluncur setelah teleport
+        Rigidbody rb = playerObj.GetComponent<Rigidbody>();
+        if (rb != null) rb.linearVelocity = Vector3.zero;
     }
 
     void HideWarning()

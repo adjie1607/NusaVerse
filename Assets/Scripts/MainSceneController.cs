@@ -56,7 +56,7 @@ public class MainSceneController : MonoBehaviour
         }
     }
 
-    void UpdateWorldProgress()
+    public void UpdateWorldProgress()
     {
         if (GameSessionManager.Instance == null) return;
 
