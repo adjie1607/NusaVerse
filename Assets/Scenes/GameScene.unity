@@ -31153,6 +31153,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: RUMAH ADAT BETANG DALAM V3
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 30e14ebbf81e8ab46866e80fd158d230, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1502877291743220047, guid: 30e14ebbf81e8ab46866e80fd158d230, type: 3}
       propertyPath: m_Layer
       value: 6
