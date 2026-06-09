@@ -213,7 +213,7 @@ Transform:
   m_GameObject: {fileID: 14324415}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.70402557, z: -0, w: 0.7101746}
-  m_LocalPosition: {x: 23.86, y: 6.5, z: 558.91}
+  m_LocalPosition: {x: 22.8, y: 10.4, z: 558.9}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -13833,38 +13833,38 @@ MonoBehaviour:
   soalRumah1:
   - questionText: "Pakaian adat khas suku Dayak \r\nyang terbuat dari serat alam
       dan \r\nmanik-manik bernama\u2026 "
-    answerA: a
-    answerB: b
-    answerC: c
-    answerD: d
-    correctAnswerIndex: 0
+    answerA: Ulos
+    answerB: Ta'a & Sapei Sapaq
+    answerC: Baju Bodo
+    answerD: Nggembe
+    correctAnswerIndex: 1
   - questionText: "Senjata tradisional yang menjadi \r\nikon suku Dayak adalah\u2026 "
-    answerA: a
-    answerB: b
-    answerC: c
-    answerD: d
-    correctAnswerIndex: 0
+    answerA: Keris
+    answerB: Mandau
+    answerC: Rencong
+    answerD: Badik
+    correctAnswerIndex: 1
   - questionText: "Alat musik tradisional Dayak \r\nyang paling ikonik untuk \r\nmengiringi
       upacara adat \r\nadalah\u2026 "
-    answerA: a
-    answerB: b
-    answerC: c
-    answerD: d
+    answerA: Sape
+    answerB: Angklung
+    answerC: Kolintang
+    answerD: Kecapi
     correctAnswerIndex: 0
   - questionText: "Permainan tradisional paling \r\nikonik masyarakat Dayak yang
       \r\nmenggunakan bilah bambu dan \r\nbola kecil disebut\u2026 "
-    answerA: a
-    answerB: b
-    answerC: c
-    answerD: d
-    correctAnswerIndex: 0
+    answerA: Engklek
+    answerB: Lato-Lato
+    answerC: Engrang
+    answerD: Asinan
+    correctAnswerIndex: 2
   - questionText: "Rumah Betang dibangun \r\nberbentuk panggung memanjang \r\ndengan
       tujuan\u2026"
-    answerA: a
-    answerB: b
-    answerC: c
-    answerD: d
-    correctAnswerIndex: 0
+    answerA: Upacara
+    answerB: 'Menghindari Banjir dan Hewan Buas '
+    answerC: Tempat Menyimpan Emas
+    answerD: Arena Lomba
+    correctAnswerIndex: 1
   soalRumah2:
   - questionText: "Pakaian adat tradisional \r\nSulawesi Tengah yang dipakai \r\nmasyarakat
       suku Kulawi \r\nbernama"
@@ -20363,7 +20363,7 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -20433,7 +20433,7 @@ MonoBehaviour:
   houseID: Rumah1
   outsideSpawnPoint: {fileID: 656383280}
   panelQuiz: {fileID: 737006699}
-  quizManager: {fileID: 1822935284}
+  quizManager: {fileID: 737006701}
 --- !u!33 &1014143584
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -41148,7 +41148,6 @@ GameObject:
   - component: {fileID: 1822935281}
   - component: {fileID: 1822935283}
   - component: {fileID: 1822935282}
-  - component: {fileID: 1822935284}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -41223,33 +41222,6 @@ MonoBehaviour:
   totalMoney: 0
   collectedItems: []
   inventoryUI: {fileID: 1822935282}
---- !u!114 &1822935284
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1822935277}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 61e424a62639c784cb937149661e5a3e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::QuizManager
-  quizPanel: {fileID: 737006699}
-  questionUI: {fileID: 1093966733}
-  buttonTexts:
-  - {fileID: 1512401045}
-  - {fileID: 805073736}
-  - {fileID: 2130281652}
-  - {fileID: 859361936}
-  soalRumah1:
-  - questionText: Siapa kamu?
-    answerA: ya
-    answerB: aku
-    answerC: 'dia '
-    answerD: saya
-    correctAnswerIndex: 0
-  soalRumah2: []
 --- !u!1 &1823111895 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 0cebcf98a527c0f44bcc9c1cee21d143, type: 3}
@@ -51141,9 +51113,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 262392497543574679, guid: ea54ee2c4aedc6d498f877a619387cbe, type: 3}
+      propertyPath: 'm_ActiveFontFeatures.Array.data[0]'
+      value: 1801810542
+      objectReference: {fileID: 0}
+    - target: {fileID: 542679617611982030, guid: ea54ee2c4aedc6d498f877a619387cbe, type: 3}
+      propertyPath: 'm_ActiveFontFeatures.Array.data[0]'
+      value: 1801810542
+      objectReference: {fileID: 0}
     - target: {fileID: 1300614965942470823, guid: ea54ee2c4aedc6d498f877a619387cbe, type: 3}
       propertyPath: m_Name
       value: Canvas (Tenant)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5337051520374744172, guid: ea54ee2c4aedc6d498f877a619387cbe, type: 3}
+      propertyPath: 'm_ActiveFontFeatures.Array.data[0]'
+      value: 1801810542
       objectReference: {fileID: 0}
     - target: {fileID: 8830768637020648982, guid: ea54ee2c4aedc6d498f877a619387cbe, type: 3}
       propertyPath: m_Pivot.x
@@ -51662,6 +51646,18 @@ PrefabInstance:
     - target: {fileID: 3759054572083620916, guid: 984f6644671f80749a99fa05f7c0f121, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4151339002698226946, guid: 984f6644671f80749a99fa05f7c0f121, type: 3}
+      propertyPath: 'm_ActiveFontFeatures.Array.data[0]'
+      value: 1801810542
+      objectReference: {fileID: 0}
+    - target: {fileID: 4223727994025985508, guid: 984f6644671f80749a99fa05f7c0f121, type: 3}
+      propertyPath: 'm_ActiveFontFeatures.Array.data[0]'
+      value: 1801810542
+      objectReference: {fileID: 0}
+    - target: {fileID: 5877753298183894366, guid: 984f6644671f80749a99fa05f7c0f121, type: 3}
+      propertyPath: 'm_ActiveFontFeatures.Array.data[0]'
+      value: 1801810542
       objectReference: {fileID: 0}
     - target: {fileID: 6105562768406511025, guid: 984f6644671f80749a99fa05f7c0f121, type: 3}
       propertyPath: m_Name

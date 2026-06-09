@@ -65,12 +65,20 @@ public class SceneTrigger : MonoBehaviour
 
         pressEText.gameObject.SetActive(false);
 
-        // Jalankan Teleportasi ke interior rumah
-        playerObj.transform.position = interiorSpawnPoint.position;
-
-        // Reset kecepatan Rigidbody agar player tidak meluncur setelah teleport
+        // --- CARA TELEPORT RIGIDBODY YANG BENAR ---
         Rigidbody rb = playerObj.GetComponent<Rigidbody>();
-        if (rb != null) rb.linearVelocity = Vector3.zero;
+        if (rb != null)
+        {
+            // Pindahkan posisinya lewat Rigidbody, bukan transform
+            rb.position = interiorSpawnPoint.position;
+            // Matikan momentum biar nggak meluncur tiba-tiba
+            rb.linearVelocity = Vector3.zero;
+        }
+        else
+        {
+            // Fallback kalau kebetulan Rigidbody lagi ga kebaca
+            playerObj.transform.position = interiorSpawnPoint.position;
+        }
     }
 
     void HideWarning()
