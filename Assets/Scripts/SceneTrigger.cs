@@ -8,7 +8,8 @@ public class SceneTrigger : MonoBehaviour
     public TextMeshProUGUI levelWarningText;
 
     [Header("Single Scene Setup")]
-    public Transform interiorSpawnPoint; // Seret objek titik spawn di DALAM Rumah Adat disini
+    public string houseID;               // ISI DI INSPECTOR (Contoh: Rumah1)
+    public Transform interiorSpawnPoint; // Titik spawn di DALAM Rumah Adat
     public int requiredLevel = 2;
 
     private bool isPlayerInside = false;
@@ -26,7 +27,16 @@ public class SceneTrigger : MonoBehaviour
 
             isPlayerInside = true;
             pressEText.gameObject.SetActive(true);
-            pressEText.text = "Tekan E untuk masuk";
+
+            // Cek apakah rumah sudah selesai diselesaikan sebelumnya
+            if (GameSessionManager.Instance != null && GameSessionManager.Instance.IsHouseComplete(houseID))
+            {
+                pressEText.text = "Rumah ini sudah selesai dipelajari!";
+            }
+            else
+            {
+                pressEText.text = "Tekan E untuk masuk";
+            }
         }
     }
 
@@ -53,11 +63,21 @@ public class SceneTrigger : MonoBehaviour
     {
         if (playerLevel == null || playerObj == null) return;
 
+        // PROTEKSI 1: Jika sudah selesai, hadang player agar tidak masuk lagi
+        if (GameSessionManager.Instance != null && GameSessionManager.Instance.IsHouseComplete(houseID))
+        {
+            levelWarningText.text = "Kamu sudah menyelesaikan kuis rumah ini!";
+            levelWarningText.gameObject.SetActive(true);
+            CancelInvoke(nameof(HideWarning));
+            Invoke(nameof(HideWarning), 1.5f);
+            return;
+        }
+
+        // PROTEKSI 2: Cek kecukupan Level
         if (playerLevel.level < requiredLevel)
         {
             levelWarningText.text = "Level kamu belum cukup!";
             levelWarningText.gameObject.SetActive(true);
-
             CancelInvoke(nameof(HideWarning));
             Invoke(nameof(HideWarning), 1.5f);
             return;
@@ -65,18 +85,15 @@ public class SceneTrigger : MonoBehaviour
 
         pressEText.gameObject.SetActive(false);
 
-        // --- CARA TELEPORT RIGIDBODY YANG BENAR ---
+        // Jalankan Teleport ke interior rumah adat
         Rigidbody rb = playerObj.GetComponent<Rigidbody>();
         if (rb != null)
         {
-            // Pindahkan posisinya lewat Rigidbody, bukan transform
             rb.position = interiorSpawnPoint.position;
-            // Matikan momentum biar nggak meluncur tiba-tiba
             rb.linearVelocity = Vector3.zero;
         }
         else
         {
-            // Fallback kalau kebetulan Rigidbody lagi ga kebaca
             playerObj.transform.position = interiorSpawnPoint.position;
         }
     }

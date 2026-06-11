@@ -86,14 +86,34 @@ public class QuizManager : MonoBehaviour
 
     public void OnAnswerSelected(int index)
     {
+        // Cek dulu biar gak error kalau list kosong
         if (currentQuestionList.Count == 0) return;
 
+        // JIKA JAWABAN BENAR
         if (index == currentQuestionList[currentQuestionIndex].correctAnswerIndex)
         {
-            Debug.Log("Benar!");
-            if (GameSessionManager.Instance != null) GameSessionManager.Instance.AddEXP(10);
+            Debug.Log("Jawaban Benar! Player dapat EXP dan Koin.");
+
+            // Cari PlayerLevel di dalam scene untuk mengupdate UI dan Data
+            PlayerLevel pLevel = FindFirstObjectByType<PlayerLevel>();
+            if (pLevel != null)
+            {
+                pLevel.AddExp(10); // Ngasih 10 EXP
+                pLevel.TransaksiBerhasil(15, 0); // Ngasih 15 Koin, dan 0 balon yang keluar
+            }
+
+            // Update juga uang di InventoryManager agar konsisten
+            if (InventoryManager.Instance != null)
+            {
+                InventoryManager.Instance.AddMoney(15);
+            }
+        }
+        else
+        {
+            Debug.Log("Jawaban Salah. Tidak dapat hadiah.");
         }
 
+        // Lanjut ke soal berikutnya
         currentQuestionIndex++;
         DisplayQuestion();
     }
@@ -119,6 +139,5 @@ public class QuizManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Time.timeScale = 1f;
 
-        Debug.Log("Kuis selesai dan gembok diperbarui tanpa reload scene.");
     }
 }
