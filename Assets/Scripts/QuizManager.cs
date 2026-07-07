@@ -24,7 +24,7 @@ public class QuizManager : MonoBehaviour
     public List<Question> soalRumah1;
     public List<Question> soalRumah2;
 
-    private List<Question> currentQuestionList = new List<Question>(); // Inisialisasi biar gak null
+    private List<Question> currentQuestionList = new List<Question>();
     private int currentQuestionIndex = 0;
 
     // Dipanggil otomatis saat Panel dinyalakan (SetActive true)
@@ -56,7 +56,6 @@ public class QuizManager : MonoBehaviour
         }
 
         currentQuestionIndex = 0;
-        // Tidak perlu panggil DisplayQuestion disini, karena OnEnable akan menanganinya
     }
 
     void DisplayQuestion()
